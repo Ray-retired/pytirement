@@ -1,0 +1,10 @@
+ipykernel
+matplotlib
+numpy
+pandas
+bokeh
+seaborn
+plotly
+scipy
+pytest
+ruff
