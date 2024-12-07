@@ -163,5 +163,3 @@ cython_debug/
 
 # Other
 .DS_Store
-ray_drawdown.ipynb
-ray_test.py
