@@ -79,3 +79,50 @@ def test_interest_only():
         )["remaining_funds"]
         == 10240000
     )
+
+
+def test_first_month():
+    """Hand calculate first month balance in drawdown table"""
+    start_month = datetime(2025, 2, 1)
+    end_month = datetime(2028, 6, 1)
+    init_balance = 410000
+    annual_interest = 0.04
+    monthly_draw = 7500
+
+    first_month_balance = (
+        draw_down_table(
+            start_month, end_month, init_balance, annual_interest, monthly_draw
+        )
+        .head(1)["Remaining funds"]
+        .values[0]
+    )
+
+    assert first_month_balance == round(
+        (init_balance - monthly_draw)
+        + (annual_interest / 12 * (init_balance - monthly_draw)),
+        2,
+    )
+
+
+def test_last_month():
+    """draw_down_final result should match last row in draw down table"""
+    start_month = datetime(2025, 2, 1)
+    end_month = datetime(2028, 6, 1)
+    init_balance = 410000
+    annual_interest = 0.04
+    monthly_draw = 7500
+
+    last_month_balance = (
+        draw_down_table(
+            start_month, end_month, init_balance, annual_interest, monthly_draw
+        )
+        .tail(1)["Remaining funds"]
+        .values[0]
+    )
+
+    assert (
+        last_month_balance
+        == draw_down_final(
+            start_month, end_month, init_balance, annual_interest, monthly_draw
+        )["remaining_funds"]
+    )
