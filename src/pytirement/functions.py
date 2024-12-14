@@ -6,8 +6,10 @@ import pandas as pd
 
 def calculate_months_difference(start_month, end_month):
     """Calculate the number of months between two dates."""
-    return (end_month.year - start_month.year) * 12 + (
-        end_month.month - start_month.month
+    return (
+        (end_month.year - start_month.year) * 12
+        + (end_month.month - start_month.month)
+        + 1
     )
 
 
@@ -20,23 +22,23 @@ def draw_down_final(
     working_balance = starting_balance
     monthly_interest = annual_interest / 12
 
-    for _ in range(months_to_goal):
+    for month in range(months_to_goal):
         # At the start of each month, deduct expected withdrawal
         working_balance -= monthly_withdrawal
         # Then accumulate interest on the remaining balance of funds
         working_balance += monthly_interest * working_balance
 
-        logging.debug(f"Month {_ + 1}: Balance = {working_balance:.2f}")
+        logging.debug(f"Month {month + 1}: Balance = {working_balance:.2f}")
 
     return {
-        "start_year": start_month.year,
-        "start_month": start_month.month,
-        "end_year": end_month.year,
-        "end_month": end_month.month,
-        "start_balance": starting_balance,
-        "monthly_draw": monthly_withdrawal,
+        "start_year": int(start_month.year),
+        "start_month": int(start_month.month),
+        "end_year": int(end_month.year),
+        "end_month": int(end_month.month),
+        "start_balance": round(starting_balance, 1),
+        "monthly_draw": round(monthly_withdrawal, 1),
         "annual_interest": round(annual_interest, 3),
-        "remaining_funds": round(working_balance, 2),
+        "remaining_funds": round(working_balance, 1),
     }
 
 
@@ -47,7 +49,6 @@ def draw_down_table(
 
     months_to_goal = calculate_months_difference(start_month, end_month)
     working_balance = starting_balance
-    months_to_go = months_to_goal
     monthly_interest = annual_interest / 12
 
     out_data = []
@@ -56,15 +57,15 @@ def draw_down_table(
         working_balance -= monthly_withdrawal
         working_balance += monthly_interest * working_balance
 
-        logging.debug(f"Month {month + 1}: Balance = {working_balance:.2f}")
+        logging.debug(f"Month {month + 1}: Balance = {working_balance:.1f}")
 
-        months_to_go -= 1
-        out_data.append([month + 1, months_to_go, round(working_balance, 2)])
+        out_data.append([month + 1, round(working_balance, 1)])
 
     logging.info(pd.date_range(start=start_month, end=end_month, freq="MS"))
 
-    df = pd.DataFrame(out_data, columns=["Month", "Months to go", "Remaining funds"])
-    df["Month Label"] = pd.date_range(start=start_month, end=end_month, freq="MS")[1:]
+    df = pd.DataFrame(out_data, columns=["Month", "Remaining funds"])
+    df["Month Label"] = pd.date_range(start=start_month, end=end_month, freq="MS")
+    df.set_index("Month Label", inplace=True)
 
     return df
 

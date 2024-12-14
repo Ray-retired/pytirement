@@ -32,7 +32,7 @@ def test_no_change():
 def test_full_draw_no_interest():
     """drawdown after 10 months without accrued interest"""
     start_month = datetime(2025, 2, 1)
-    end_month = datetime(2025, 12, 1)
+    end_month = datetime(2025, 11, 1)
     init_balance = 10000
     annual_interest = 0
     monthly_draw = 1000
@@ -57,7 +57,7 @@ def test_full_draw_no_interest():
 def test_interest_only():
     """100% monthly interest - no drawdown"""
     start_month = datetime(2025, 2, 1)
-    end_month = datetime(2025, 12, 1)
+    end_month = datetime(2025, 11, 1)
     init_balance = 10000
     annual_interest = 12
     monthly_draw = 0
@@ -100,7 +100,7 @@ def test_first_month():
     assert first_month_balance == round(
         (init_balance - monthly_draw)
         + (annual_interest / 12 * (init_balance - monthly_draw)),
-        2,
+        1,
     )
 
 
